@@ -1,7 +1,7 @@
 /**
  * Created by Jordan3D on 3/11/2018.
  */
-require('dotenv').config();
+//require('dotenv').config();
 
 const express = require('express');
 const app = require('express')();
