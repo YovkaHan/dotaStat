@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
+
+    <title>Document</title>
+</head>
+<body>
+<section class="main">
+    <div class="wrapper">
+        <h1 class="main__title">Hello, my dear friend! Here u can generate list of ur dota matches</h1>
+        <div class="main__form form" id="textSend">
+            <!--<div class="input-block">-->
+                <!--<label for="textField1">Account ID</label>-->
+                <!--<input id="textField1" class="form__input" type="text">-->
+            <!--</div>-->
+            <!--<div class="input-block">-->
+                <!--<label for="textField2">Text 2</label>-->
+                <!--<input id="textField2" class="form__input" type="text">-->
+            <!--</div>-->
+            <button class="button form__action" data-action="start">Start</button>
+            <button class="button form__action hidden" data-action="stop">Stop</button>
+        </div>
+        <div class="main__list matches dino">
+            <button class="btn dino__action" data-action="generate"><span class="btn__value">Generate</span></button>
+            <div class="matches__list dino__list list" data-type="match-list">
+                <div class="list__item item sample" data-key="0">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="./js/script.js"></script>
+</body>
+</html>
