@@ -9,7 +9,8 @@ const https = require('https');
 const http = require('http').Server(app);
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const port = 4000;
+const port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
+    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0'
 
 const io = require('socket.io')(http);
 
@@ -50,7 +51,7 @@ io.on('connection', function (socket) {
     })
 });
 
-http.listen(port, function () {
+http.listen(port, ip, function () {
     console.log(`listening on *:${port}`);
     // console.log(matchShort.getLatestMatch());
 });
