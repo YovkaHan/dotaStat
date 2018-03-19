@@ -2,7 +2,6 @@
  * Created by Jordan3D on 3/11/2018.
  */
 require('dotenv').config();
-const Promise = require('promise');
 
 const express = require('express');
 const app = require('express')();
