@@ -9,7 +9,8 @@
     "mongodb": "^3.0.4",
     "mongoose": "^5.0.10",
     "nodemon": "^1.17.1",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.0.4",
+    "promise": "^8.0.1"
   },
   "devDependencies": {},
   "scripts": {
