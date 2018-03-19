@@ -62,6 +62,8 @@ app.get('/init', function (req, res) {
     console.log(commands.address.getAddress(req));
     res.send(globalStatus);
 });
+
+module.exports = app ;
 // app.get('/api/generate', function (req, res) {
 //     https.get('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistoryBySequenceNum/v1?key=1DD49C788FB4658D001B1C14C175E0EE', (resp) => {
 //         let data = '';
