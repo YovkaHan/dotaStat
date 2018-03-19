@@ -51,7 +51,7 @@ io.on('connection', function (socket) {
     })
 });
 
-app.listen(port, ip, function () {
+http.listen(port, ip, function () {
     console.log(`App is listening on *:${port}`);
     // console.log(matchShort.getLatestMatch());
 });
