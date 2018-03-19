@@ -52,7 +52,7 @@ io.on('connection', function (socket) {
 });
 
 http.listen(port, ip, function () {
-    console.log(`listening on *:${port}`);
+    console.log(`App is listening on *:${port}`);
     // console.log(matchShort.getLatestMatch());
 });
 
