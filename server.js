@@ -4,7 +4,7 @@
 //require('dotenv').config();
 
 const express = require('express');
-const app = require('express')();
+const app = express();
 const https = require('https');
 const http = require('http').Server(app);
 const bodyParser = require('body-parser');
@@ -12,11 +12,11 @@ const mongoose = require('mongoose');
 const port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 
-const io = require('socket.io')(http);
-
-const globalStatus = {
-    started: false
-}
+// const io = require('socket.io')(http);
+//
+// const globalStatus = {
+//     started: false
+// }
 
 // require('./back/db').mongo_db(function (err, suc) {
 //     if(err){
@@ -30,33 +30,36 @@ const globalStatus = {
 
 app.use(bodyParser.json());
 
-io.on('connection', function (socket) {
-    console.log('connected');
-
-    socket.on('vacuum init', function (socket) {
-        //io.emit('block-action', {data: true});
-        globalStatus.started = true;
-        cicle.start(gMHBSN.getFromREST, function (data) {
-            io.emit('data-transmission', data);
-        });
-    });
-    socket.on('vacuum stop', function (socket) {
-        cicle.stop();
-        globalStatus.started = false;
-    });
-    socket.on('show matches', function (socket) {
-        gMHBSN.getMatchesFromDB().then(function (result) {
-            io.emit('match-list', result);
-        });
-    })
-});
+// io.on('connection', function (socket) {
+//     console.log('connected');
+//
+//     socket.on('vacuum init', function (socket) {
+//         //io.emit('block-action', {data: true});
+//         globalStatus.started = true;
+//         cicle.start(gMHBSN.getFromREST, function (data) {
+//             io.emit('data-transmission', data);
+//         });
+//     });
+//     socket.on('vacuum stop', function (socket) {
+//         cicle.stop();
+//         globalStatus.started = false;
+//     });
+//     socket.on('show matches', function (socket) {
+//         gMHBSN.getMatchesFromDB().then(function (result) {
+//             io.emit('match-list', result);
+//         });
+//     })
+// });
 
 app.listen(port, ip, function () {
     console.log(`App is listening on *:${port}`);
     // console.log(matchShort.getLatestMatch());
 });
 
-app.use(express.static('./app/public'));
+//app.use(express.static('./app/public'));
+app.get('/', function (req,res) {
+    res.end('HELLO');
+});
 
 
 app.get('/init', function (req, res) {
