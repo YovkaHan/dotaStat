@@ -18,14 +18,14 @@ const globalStatus = {
     started: false
 }
 
-require('./back/db').mongo_db(function (err, suc) {
-    if(err){
-        console.log(err);
-    }
-});
-const commands = require('./back/commands');
-const gMHBSN = commands.GetMatchHistoryBtSequenceNum;
-const cicle = gMHBSN.matchesCicle();
+// require('./back/db').mongo_db(function (err, suc) {
+//     if(err){
+//         console.log(err);
+//     }
+// });
+// const commands = require('./back/commands');
+// const gMHBSN = commands.GetMatchHistoryBtSequenceNum;
+// const cicle = gMHBSN.matchesCicle();
 
 
 app.use(bodyParser.json());
@@ -51,15 +51,16 @@ io.on('connection', function (socket) {
     })
 });
 
-http.listen(port, ip, function () {
+app.listen(port, ip, function () {
     console.log(`App is listening on *:${port}`);
     // console.log(matchShort.getLatestMatch());
 });
 
-app.use(express.static(__dirname + '/app/public'));
+app.use(express.static('./app/public'));
+
 
 app.get('/init', function (req, res) {
-    console.log(commands.address.getAddress(req));
+  //  console.log(commands.address.getAddress(req));
     res.send(globalStatus);
 });
 
