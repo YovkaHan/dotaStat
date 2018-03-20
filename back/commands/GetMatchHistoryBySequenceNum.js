@@ -147,7 +147,6 @@ function getMatchesCicle(action = getFromREST, ioAction = undefined) {
 function getFromREST() {
     return new Promise(function (resolve, reject) {
         let options = makeOptions(requestString('GetMatchHistoryBySequenceNum'));
-        console.log(options);
         https.get(options, (resp) => {
             let data = '';
 

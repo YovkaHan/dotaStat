@@ -11,7 +11,6 @@ const mongoose = require('mongoose');
 //db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 module.exports.mongo_db = function (callback) {
-    console.log(process.env.OPENSHIFT_MONGODB_DB_URL+'  '+process.env.MONGO_URL+'  '+process.env.DATABASE_SERVICE_NAME);
     let mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
         mongoURLLabel = "";
 
@@ -39,7 +38,6 @@ module.exports.mongo_db = function (callback) {
         dbDetails = new Object();
 
     const initDb = function(callback) {
-        console.log(`InitDB mongoURL ${mongoURL}`);
         if (mongoURL == null) return;
 
         mongoose.connect(mongoURL, function(err, conn) {
@@ -53,7 +51,8 @@ module.exports.mongo_db = function (callback) {
             dbDetails.url = mongoURLLabel;
             dbDetails.type = 'MongoDB';
 
-            console.log('Connected to MongoDB at: %s', mongoURL);
+            //console.log('Connected to MongoDB at: %s', mongoURL);
+            console.log('Connected to MongoDB');
             callback({},{
                 db: db,
                 dbDetails: dbDetails

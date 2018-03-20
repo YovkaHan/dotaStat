@@ -1,7 +1,7 @@
 /**
  * Created by Jordan3D on 3/11/2018.
  */
-//require('dotenv').config();
+require('dotenv').config();
 
 const express = require('express');
 const app = require('express')();
@@ -36,7 +36,7 @@ io.on('connection', function (socket) {
     socket.on('vacuum init', function (socket) {
         //io.emit('block-action', {data: true});
         globalStatus.started = true;
-        cicle.start(gMHBSN.getFromREST, function (data) {
+        cicle.start({action: gMHBSN.getFromREST, timing: 500}, function (data) {
             io.emit('data-transmission', data);
         });
     });
