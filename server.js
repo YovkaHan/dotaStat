@@ -4,7 +4,7 @@
 //require('dotenv').config();
 
 const express = require('express');
-const app = express();
+const app = require('express')();
 const https = require('https');
 const http = require('http').Server(app);
 const bodyParser = require('body-parser');
@@ -12,58 +12,54 @@ const mongoose = require('mongoose');
 const port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 
-// const io = require('socket.io')(http);
-//
-// const globalStatus = {
-//     started: false
-// }
+const io = require('socket.io')(http);
 
-// require('./back/db').mongo_db(function (err, suc) {
-//     if(err){
-//         console.log(err);
-//     }
-// });
-// const commands = require('./back/commands');
-// const gMHBSN = commands.GetMatchHistoryBtSequenceNum;
-// const cicle = gMHBSN.matchesCicle();
+const globalStatus = {
+    started: false
+}
+
+require('./back/db').mongo_db(function (err, suc) {
+    if(err){
+        console.log(err);
+    }
+});
+const commands = require('./back/commands');
+const gMHBSN = commands.GetMatchHistoryBtSequenceNum;
+const cicle = gMHBSN.matchesCicle();
 
 
 app.use(bodyParser.json());
 
-// io.on('connection', function (socket) {
-//     console.log('connected');
-//
-//     socket.on('vacuum init', function (socket) {
-//         //io.emit('block-action', {data: true});
-//         globalStatus.started = true;
-//         cicle.start(gMHBSN.getFromREST, function (data) {
-//             io.emit('data-transmission', data);
-//         });
-//     });
-//     socket.on('vacuum stop', function (socket) {
-//         cicle.stop();
-//         globalStatus.started = false;
-//     });
-//     socket.on('show matches', function (socket) {
-//         gMHBSN.getMatchesFromDB().then(function (result) {
-//             io.emit('match-list', result);
-//         });
-//     })
-// });
+io.on('connection', function (socket) {
+    console.log('connected');
 
-app.listen(port, ip, function () {
+    socket.on('vacuum init', function (socket) {
+        //io.emit('block-action', {data: true});
+        globalStatus.started = true;
+        cicle.start(gMHBSN.getFromREST, function (data) {
+            io.emit('data-transmission', data);
+        });
+    });
+    socket.on('vacuum stop', function (socket) {
+        cicle.stop();
+        globalStatus.started = false;
+    });
+    socket.on('show matches', function (socket) {
+        gMHBSN.getMatchesFromDB().then(function (result) {
+            io.emit('match-list', result);
+        });
+    })
+});
+
+http.listen(port, ip, function () {
     console.log(`App is listening on *:${port}`);
     // console.log(matchShort.getLatestMatch());
 });
 
-//app.use(express.static('./app/public'));
-app.get('/', function (req,res) {
-    res.end('HELLO');
-});
-
+app.use(express.static(__dirname + '/app/public'));
 
 app.get('/init', function (req, res) {
-  //  console.log(commands.address.getAddress(req));
+    console.log(commands.address.getAddress(req));
     res.send(globalStatus);
 });
 
