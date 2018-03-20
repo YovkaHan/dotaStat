@@ -10,7 +10,7 @@ let mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
     mongoURLLabel = "";
 
 if (mongoURL === null && process.env.DATABASE_SERVICE_NAME) {
-    const mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
+    let mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
         mongoHost = process.env[mongoServiceName + '_SERVICE_HOST'],
         mongoPort = process.env[mongoServiceName + '_SERVICE_PORT'],
         mongoDatabase = process.env[mongoServiceName + '_DATABASE'],
@@ -32,6 +32,7 @@ let db = null,
     dbDetails = new Object();
 
 const initDb = function(callback) {
+    console.log(mongoURL);
     if (mongoURL == null) return;
 
     mongoose.connect(mongoURL, function(err, conn) {
