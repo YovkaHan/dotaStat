@@ -17,6 +17,7 @@ if (mongoURL === null && process.env.DATABASE_SERVICE_NAME) {
         mongoPassword = process.env[mongoServiceName + '_PASSWORD'],
         mongoUser = process.env[mongoServiceName + '_USER'];
 
+    console.log(`mongoHost = ${mongoHost}, mongoPort = ${mongoPort}, mongoDatabase = ${mongoDatabase}, mongoPassword = ${mongoPassword}, mongoUser = ${mongoUser} `);
     if (mongoHost && mongoPort && mongoDatabase) {
         mongoURLLabel = mongoURL = 'mongodb://';
         if (mongoUser && mongoPassword) {
@@ -32,7 +33,7 @@ let db = null,
     dbDetails = new Object();
 
 const initDb = function(callback) {
-    console.log(mongoURL);
+    console.log(`InitDB mongoURL ${mongoURL}`);
     if (mongoURL == null) return;
 
     mongoose.connect(mongoURL, function(err, conn) {
