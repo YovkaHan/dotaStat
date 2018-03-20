@@ -11,11 +11,11 @@ const mongoose = require('mongoose');
 //db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 module.exports.mongo_db = function (callback) {
-
+    console.log(process.env.OPENSHIFT_MONGODB_DB_URL+'  '+process.env.MONGO_URL+'  '+process.env.DATABASE_SERVICE_NAME);
     let mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
         mongoURLLabel = "";
 
-    if (mongoURL === null && process.env.DATABASE_SERVICE_NAME) {
+    if (!mongoURL && process.env.DATABASE_SERVICE_NAME) {
         let mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
             mongoHost = process.env[mongoServiceName + '_SERVICE_HOST'],
             mongoPort = process.env[mongoServiceName + '_SERVICE_PORT'],
