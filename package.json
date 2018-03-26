@@ -4,13 +4,17 @@
   "description": "",
   "main": "server.js",
   "dependencies": {
+    "bcrypt": "^1.0.3",
+    "bluebird": "^3.5.1",
+    "connect-mongo": "^2.0.1",
     "dotenv": "^5.0.1",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
     "mongodb": "^3.0.4",
     "mongoose": "^5.0.10",
     "nodemon": "^1.17.1",
-    "socket.io": "^2.0.4",
-    "promise": "^8.0.1"
+    "promise": "^8.0.1",
+    "socket.io": "^2.0.4"
   },
   "devDependencies": {},
   "scripts": {

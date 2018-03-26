@@ -5,8 +5,8 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="main/static/css/normalize.css">
+    <link rel="stylesheet" href="main/static/css/style.css">
     <script
             src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -16,17 +16,29 @@
     <title>Document</title>
 </head>
 <body>
+<header>
+    <div class="wrapper">
+        <div class="control" id="controlPanel">
+             <button class="btn" data-action="logout">
+                 <span class="btn__value" >Logout</span>
+             </button>
+            <button class="btn" data-action="initiate">
+                <span class="btn__value" >Initiate</span>
+            </button>
+        </div>
+    </div>
+</header>
 <section class="main">
     <div class="wrapper">
         <h1 class="main__title">Hello, my dear friend! Here u can generate list of ur dota matches</h1>
         <div class="main__form form" id="textSend">
+            <div class="input-block">
+                <label for="textField1">Account ID</label>
+                <input id="textField1" class="form__input" type="text">
+            </div>
             <!--<div class="input-block">-->
-                <!--<label for="textField1">Account ID</label>-->
-                <!--<input id="textField1" class="form__input" type="text">-->
-            <!--</div>-->
-            <!--<div class="input-block">-->
-                <!--<label for="textField2">Text 2</label>-->
-                <!--<input id="textField2" class="form__input" type="text">-->
+            <!--<label for="textField2">Text 2</label>-->
+            <!--<input id="textField2" class="form__input" type="text">-->
             <!--</div>-->
             <button class="button form__action" data-action="start">Start</button>
             <button class="button form__action hidden" data-action="stop">Stop</button>
@@ -40,6 +52,6 @@
         </div>
     </div>
 </section>
-<script src="./js/script.js"></script>
+<script src="main/static/js/script.js"></script>
 </body>
 </html>

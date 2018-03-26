@@ -4,7 +4,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const matchShortSchema = new Schema({
+const matchesSchema = new Schema({
     barracks_status_dire: {
         type: Number
     },
@@ -76,25 +76,25 @@ const matchShortSchema = new Schema({
     }
 }, {collection: 'matches'});
 
-const matchShort = module.exports = mongoose.model('matchShort', matchShortSchema);
+const matches = module.exports = mongoose.model('matches', matchesSchema);
 
 // Get matches
 module.exports.getMatches = function (options,cb, limit) {
-     matchShort.find(options,cb).limit(limit);
+     matches.find(options,cb).limit(limit);
 };
 
 // Add match
 module.exports.addMatch = function (options,callback) {
-    // matchShort.find({match_id: options.match_id}, function (err, match) {
+    // matches.find({match_id: options.match_id}, function (err, match) {
     //    if(!match){
-    //        matchShort.create(options,callback);
+    //        matches.create(options,callback);
     //    }
     // });
-    matchShort.create(options,callback);
+    matches.create(options,callback);
 };
 
 // Get Max Id match
 module.exports.getLatestMatch = function () {
-     return matchShort.find({}, {match_seq_num: 1, _id:0}).sort({match_seq_num:-1}).limit(1);
+     return matches.find({}, {match_seq_num: 1, _id:0}).sort({match_seq_num:-1}).limit(1);
 };
 

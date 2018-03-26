@@ -1,0 +1,35 @@
+*{
+    box-sizing: border-box;
+}
+.wrapper {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    max-width: 1000px;
+}
+.input-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 320px;
+    width: 100%;
+    padding: 5px;
+    border: 2px solid black;
+}
+.input-block{
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+}
+.input-block label {
+   font-size: inherit;
+    width: 100%;
+}
+.input-block input {
+    font-size: inherit;
+    width: 100%;
+}
+.btn {
+
+}

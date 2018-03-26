@@ -65,6 +65,7 @@ function ready() {
         globalStatus = status;
         process('.form');
         process('.dino');
+        process('.control');
     }
 
     function process(selector) {
@@ -76,7 +77,7 @@ function ready() {
         });
     }
     function findOperation(element, selector) {
-        var operations = [/(form)/, /(dino)/];
+        var operations = [/(form)/, /(dino)/, /(control)/];
         operations.map(function (op) {
             if(op.test(selector)) {
                 actionFunction(element, op);
@@ -88,6 +89,8 @@ function ready() {
             asForm(element);
         }else if(operation.test('dino')) {
             asDino(element);
+        }else if(operation.test('control')){
+            asControl(element)
         }
     }
     function generate(data, parentNode, sample, items) {
@@ -183,6 +186,39 @@ function ready() {
         //         }
         //     });
         // }
+    }
+    function asControl(element) {
+        var $element = $(element);
+        var $btn = $element.find('.btn');
+
+        $btn.on('click', function () {
+            var action = $(this).attr('data-action');
+
+            if(action === 'logout'){
+                $.ajax({
+                    type: "POST",
+                    url: 'main/logout',
+                    data: JSON.stringify({}),
+                    dataType: "json",
+                    success: function(data, textStatus) {
+                        if (data.redirect) {
+                            // data.redirect contains the string URL to redirect to
+                            window.location.href = data.redirect;
+                        }
+                    }
+                })
+            }else if(action === 'initiate'){
+                $.ajax({
+                    type: "POST",
+                    url: 'initiate',
+                    data: JSON.stringify({}),
+                    dataType: "json",
+                    success: function(data, textStatus) {
+
+                    }
+                })
+            }
+        });
     }
     function matchListElement(element, data) {
         element.setAttribute('data-key', ++data.key);
