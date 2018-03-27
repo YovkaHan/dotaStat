@@ -1,21 +1,32 @@
 *{
     box-sizing: border-box;
 }
+html, body, main {
+    height: 100%;
+}
 .wrapper {
     position: relative;
     width: 100%;
+    height: inherit;
     margin: 0 auto;
     max-width: 1000px;
 }
 .input-form {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     max-width: 320px;
     width: 100%;
-    padding: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
+    padding: 10px 5px;
     border: 2px solid black;
+}
+.input-form > * {
+    margin: 6px 0;
 }
 .input-block{
     display: flex;
@@ -24,10 +35,7 @@
 }
 .input-block label {
    font-size: inherit;
-    width: 100%;
-}
-.input-block input {
-    font-size: inherit;
+    letter-spacing: 0.6px;
     width: 100%;
 }
 .btn {

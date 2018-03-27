@@ -11,23 +11,22 @@ module.exports = function (callback) {
         callback(err);
     });
     connection.once('open', function () {
-
-        const Config = Promise.promisify(require('./models/config'));
-        const Matches = Promise.promisify(require('./models/matches'));
-        const SteamIds = Promise.promisify(require('./models/steam_ids'));
+        const Key = Promise.promisify(require('./models/keys'));
+        const Match = Promise.promisify(require('./models/matches'));
+        const SteamId = Promise.promisify(require('./models/steam_ids'));
         const Timeline = Promise.promisify(require('./models/timeline'));
 
         Promise.all(
             [
-                Config(connection),
-                Matches(connection),
-                SteamIds(connection),
+                Key(connection),
+                Match(connection),
+                SteamId(connection),
                 Timeline(connection)
-            ]).spread(function () {
+            ]).spread(function (Key, Match, SteamId, Timeline) {
             const models = {
-                Config: User,
-                Matches: Matches,
-                SteamIds: SteamIds,
+                Key: Key,
+                Matches: Match,
+                SteamIds: SteamId,
                 Timeline: Timeline
             };
             callback(null,{

@@ -2,7 +2,7 @@
  * Created by Jordan3D on 3/21/2018.
  */
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+
 const reqOptions = {
     GetMatchHistoryBySequenceNum : {
         start_at_match_seq_num: "0"
@@ -15,26 +15,29 @@ const reqOptions = {
     }
 };
 
-const steamIdsSchema = new Schema({
-    value: {
-        type: String
-    },
-    requests: {
-        type: Object
-    }
-}, {collection: 'steam_ids'});
+module.exports = function (connection, callback) {
+    const steamIdSchema = new mongoose.Schema({
+        value: {
+            type: String
+        },
+        requests: {
+            type: Object
+        }
+    }, {collection: 'steam_ids'});
+    const SteamId = connection.model('SteamId', steamIdSchema);
 
-const steamIds = module.exports = mongoose.model('steamIds', steamIdsSchema);
+    steamIdSchema.statics.getKeys = function (id,cb) {
+        SteamId.findOne({ "value": id},cb);
+    };
+    steamIdSchema.statics.saveOptions = function (query, newData, cb) {
+        SteamId.findOneAndUpdate(query, newData, {upsert:true}, cb);
+    };
+    steamIdSchema.statics.setNew = function (id, cb) {
+        let object = {value: ""+id, reqOptions: makeReqOptions(id)};
+        SteamId.insert(object, cb);
+    };
 
-module.exports.getById = function (id,cb) {
-    steamIds.findOne({ "value": id},cb);
-};
-module.exports.saveOptions = function (query, newData, cb) {
-    steamIds.findOneAndUpdate(query, newData, {upsert:true}, cb);
-};
-module.exports.setNew = function (id, cb) {
-    let object = {value: ""+id, reqOptions: makeReqOptions(id)};
-    steamIds.insert(object, cb);
+    callback(null, SteamId);
 };
 
 function makeReqOptions(id) {

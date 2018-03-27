@@ -2,22 +2,25 @@
  * Created by Jordan3D on 3/22/2018.
  */
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const timelineSchema = new Schema({
-    start_time: {
-        type: String
-    },
-    match_seq_num: {
-        type: String
-    }
-}, {collection: 'timeline'});
+module.exports = function (connection, callback) {
+    const timelineSchema = new mongoose.Schema({
+        start_time: {
+            type: String
+        },
+        match_seq_num: {
+            type: String
+        }
+    }, {collection: 'timeline'});
 
-const timeline = module.exports = mongoose.model('timeline', timelineSchema);
+    const Timeline = connection.model('Timeline', timelineSchema);
 
-module.exports.getAll = function (cb) {
-    timeline.find({},cb);
-};
-module.exports.addNew = function (data,cb) {
-    timeline.create(data,cb);
+    timelineSchema.statics.getAll = function (cb) {
+        Timeline.find({}, cb);
+    };
+    timelineSchema.statics.addNew = function (data,cb) {
+        timeline.create(data,cb);
+    };
+
+    callback(null, Timeline);
 };

@@ -5,7 +5,6 @@ const Promise = require('promise');
 const https = require('https');
 const config = require('../db/dota2stat/models/config');
 
-
 function reqOptConstructor(id) {
     let self = this;
     self.data = null;

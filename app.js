@@ -38,6 +38,12 @@ db().then(function (db) {
     }));
     routes(app, db.auth.models.User);
 }).catch(function (err) {
+
+    // Возожные траблы с этим
+    // MongoError: Topology was destroyed
+    if(session.state == 'DESTROYED'){
+        console.log(1);
+    }
     if (err) {
         console.log(err);
     }

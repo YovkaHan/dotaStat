@@ -210,7 +210,7 @@ function ready() {
             }else if(action === 'initiate'){
                 $.ajax({
                     type: "POST",
-                    url: 'initiate',
+                    url: 'main/initiate',
                     data: JSON.stringify({}),
                     dataType: "json",
                     success: function(data, textStatus) {
