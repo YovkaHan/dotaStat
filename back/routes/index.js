@@ -4,11 +4,11 @@
 const express = require('express');
 const router = express.Router();
 
-module.exports = function (app, User) {
+module.exports = function (app, htpp, User) {
 
     const controller = require('../controllers/rootController')(User);
     const auth = require('./authentication')(app, User, '/auth', '../main');
-    const main = require('./main')(app, User, '/main', '../auth');
+    const main = require('./main')(app, htpp, User, '/main', '../auth');
 
     app.use(controller.otputOriginalUrl);
 

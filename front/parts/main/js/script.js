@@ -1,7 +1,7 @@
 /**
  * Created by Jordan3D on 3/11/2018.
  */
-var globalStatus = null;
+var globalStatus = false;
 function Memory() {
     var returned = {};
     var store = [];
@@ -50,22 +50,26 @@ function ready() {
     // });
 
     $.ajax({
-        url: '/init',
+        url: 'main/init',
         contentType : "application/json",
         method: "GET",
         success: function (data, textStatus) {
-            init(data);
+            init({first: true}, data);
         },
         error: function (request, status, error) {
             console.log(request.responseText);
         }
     });
 
-    function init(status) {
-        globalStatus = status;
-        process('.form');
-        process('.dino');
-        process('.control');
+    function init(stage, status) {
+        if(stage.first) {
+            globalStatus = status;
+            process('.control');
+        }
+        if(status || stage.second) {
+            process('.form');
+            process('.dino');
+        }
     }
 
     function process(selector) {
@@ -116,14 +120,9 @@ function ready() {
     function asForm(element) {
         var $element = $(element);
         var $inputs = $element.find('.form__input');
+        var $loadBtn = $element.find('.form__action').filter('[data-action="load"]');
         var $startBtn = $element.find('.form__action').filter('[data-action="start"]');
         var $stopBtn = $element.find('.form__action').filter('[data-action="stop"]');
-
-        //init
-        if(globalStatus.started){
-            $startBtn.toggleClass('hidden');
-            $stopBtn.toggleClass('hidden');
-        }
 
         socket.on('block-action', function(msg){
             if(msg.data.is === true) {
@@ -133,9 +132,12 @@ function ready() {
             }
         });
 
-        $startBtn.on('click', function () {
-            $startBtn.toggleClass('hidden');
-            $stopBtn.toggleClass('hidden');
+        socket.on('Steam ID loaded', function (data) {
+            $startBtn.removeAttr('disabled');
+            console.log(data);
+        });
+
+        $loadBtn.on('click', function () {
             var data = {};
 
             $.each($inputs, function (i, val) {
@@ -143,14 +145,21 @@ function ready() {
                 data[$elem.attr('id')] = $elem.val();
             });
 
-            socket.emit('vacuum init', {
+            socket.emit('Steam ID load', {
                 data: data
             });
         });
+        $startBtn.on('click', function () {
+            $startBtn.attr('disabled', 'disabled');
+            $stopBtn.removeAttr('disabled');
+
+            socket.emit('start vacuum', {});
+        });
         $stopBtn.on('click', function () {
-            $startBtn.toggleClass('hidden');
-            $stopBtn.toggleClass('hidden');
-            socket.emit('vacuum stop', {});
+            $startBtn.removeAttr('disabled');
+            $stopBtn.attr('disabled', 'disabled');
+
+            socket.emit('stop vacuum', {});
         })
 
     }
@@ -191,6 +200,14 @@ function ready() {
         var $element = $(element);
         var $btn = $element.find('.btn');
 
+        if(globalStatus){
+            $btn.filter('[data-action=initiate]').attr('disabled','disabled');
+        }
+
+        socket.on('id ready', function (data) {
+            $btn.filter('[data-action=initiate]').attr('disabled','disabled');
+        });
+
         $btn.on('click', function () {
             var action = $(this).attr('data-action');
 
@@ -214,7 +231,9 @@ function ready() {
                     data: JSON.stringify({}),
                     dataType: "json",
                     success: function(data, textStatus) {
-
+                        if(data.app === "started"){
+                            init({second: true});
+                        }
                     }
                 })
             }

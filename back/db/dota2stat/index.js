@@ -25,8 +25,8 @@ module.exports = function (callback) {
             ]).spread(function (Key, Match, SteamId, Timeline) {
             const models = {
                 Key: Key,
-                Matches: Match,
-                SteamIds: SteamId,
+                Match: Match,
+                SteamId: SteamId,
                 Timeline: Timeline
             };
             callback(null,{

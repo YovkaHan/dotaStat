@@ -19,95 +19,97 @@
  повторить запрос
 
  */
-const root = require('./');
 
-const steamIds = require('../db/dota2stat/models/steam_ids');
+const Promise = require('bluebird');
 
-const Promise = require('promise');
-const matchShort = require('../db/dota2stat/models/matches');
+module.exports = function (models) {
 
-
-
-function getMatchesFromDB() {
-    return new Promise(function (resolve, reject) {
-        matchShort.getMatches({}, function (err, matches) {
-            if (err) {
-                reject(err);
-            }
-            resolve(matches);
-        });
-    });
-}
-
-function matchesCycle() {
-    let closure = {
-        flag: true,
-        interval: null
-    };
-    return {
-        start: function (config) {
-            config.timing = config.timing || 1000;
-            closure.interval = setInterval(function () {
-                if (closure.flag) {
-                    closure.flag = !closure.flag;
-                    getMatchesCycle(config.action).then(function (res) {
-                        closure.flag = !closure.flag;
-                    });
+    function getMatchesFromDB() {
+        return new Promise(function (resolve, reject) {
+            models.Match.getMatches({}, function (err, matches) {
+                if (err) {
+                    reject(err);
                 }
-            }, config.timing);
-        },
-        stop: function () {
-            clearInterval(closure.interval);
-            stopMatchesCicle();
-        }
-    };
-}
+                resolve(matches);
+            });
+        });
+    }
 
-function getMatchesCycle(action = getFromREST, actionConfig = {reqStr: 'GetMatchHistoryBySequenceNum'}, ioAction = undefined) {
-    return new Promise(function (resolve, reject) {
-        action(actionConfig).then(function (result) {
-            result.result.matches.map(function (match, i, list) {
-                for (let m in match.players) {
-                    if (match.players[m].hasOwnProperty('account_id') && match.players[m].account_id == requestOptions.data.requests.GetMatchHistory.ACCOUNT_ID) {
-                        matchShort.addMatch(match, function (err, match) {
-                            // if (!err) {
-                            //     ioAction(match);
-                            // } else {
-                            //
-                            // }
+    function matchesCycle() {
+        let closure = {
+            flag: true,
+            interval: null
+        };
+        return {
+            start: function (config) {
+                config.timing = config.timing || 500;
+                closure.interval = setInterval(function () {
+                    if (closure.flag) {
+                        closure.flag = !closure.flag;
+                        getMatchesCycle(config.action, config.configToAction, config.actionInAction).then(function (res) {
+                            closure.flag = !closure.flag;
                         });
                     }
-                }
-                if (i === list.length - 1) {
-                    requestOptions.data.requests.GetMatchHistoryBySequenceNum.start_at_match_seq_num = "" + match.match_seq_num;
-                    resolve({});
-                }
-            });
-        }, function (rejected) {
-            resolve({});
-        });
-    });
-}
-
-function stopMatchesCycle() {
-    saveJob(root.initConfig.requestOptions.data.reqOptions);
-}
-
-function saveJob(data) {
-    new Promise(function (resolve, reject) {
-        steamIds.saveOptions({_id: requestOptions.data._id}, {reqOptions: data}, function (err, res) {
-            if (err) {
-                reject(err);
-                console.log(err);
+                }, config.timing);
+            },
+            stop: function () {
+                clearInterval(closure.interval);
+                //stopMatchesCicle();
             }
-            resolve(res);
-        })
-    });
+        };
+    }
+
+    function getMatchesCycle(action, config, actionInAction) {
+        return new Promise(function (resolve, reject) {
+            action(config).then(function (result) {
+                actionInAction(result.result.matches);
+                result.result.matches.map(function (match, i, list) {
+                    for (let m in match.players) {
+                        if (match.players[m].hasOwnProperty('account_id') && match.players[m].account_id == config.reqOptions.GetMatchHistory.ACCOUNT_ID) {
+                            models.Match.addMatch(match, function (err, match) {
+                                // if (!err) {
+                                //     ioAction(match);
+                                // } else {
+                                //
+                                // }
+                            });
+                        }
+                    }
+                    if (i === list.length - 1) {
+                        config.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num = "" + match.match_seq_num;
+                        console.log(config.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num);
+                        stopMatchesCycle(config);
+                        resolve({});
+                    }
+                });
+            }).catch(function (err) {
+                console.log('getMatchesCycle Error');
+                console.log(err);
+                resolve({});
+            })
+        });
+    }
+
+    function stopMatchesCycle(config) {
+        saveJob(config);
+    }
+
+    function saveJob(config) {
+        new Promise(function (resolve, reject) {
+
+            models.SteamId.saveOptions({value: config.reqOptions.GetPlayerSummaries.steamids}, {reqOptions: config.reqOptions}, function (err, res) {
+                if (err) {
+                    reject(err);
+                    console.log(err);
+                }
+                resolve(res);
+            })
+        });
+    }
+
+    return {
+        getMatchesFromDB: getMatchesFromDB,
+        matchesCycle: matchesCycle,
+        stopMatchesCycle: stopMatchesCycle
+    };
 }
-
-const GetMatchHistoryBtSequenceNum = module.exports = {
-    getMatchesFromDB: getMatchesFromDB,
-    matchesCycle: matchesCycle,
-    stopMatchesCycle: stopMatchesCycle
-};
-

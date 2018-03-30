@@ -75,7 +75,6 @@ module.exports = function (connection, callback) {
             type: Number
         }
     }, {collection: 'matches'});
-    const Match = connection.model('Match', matchesSchema);
 
     matchesSchema.statics.getMatches = function (options, limit, cb) {
         Match.find(options,cb).limit(limit);
@@ -93,6 +92,8 @@ module.exports = function (connection, callback) {
     matchesSchema.statics.getLatestMatch = function (callback) {
         callback(matches.find({}, {match_seq_num: 1, _id:0}).sort({match_seq_num:-1}).limit(1));
     };
+
+    const Match = connection.model('Match', matchesSchema);
 
     callback(null, Match);
 };

@@ -19,11 +19,11 @@
 <header>
     <div class="wrapper">
         <div class="control" id="controlPanel">
-             <button class="btn" data-action="logout">
-                 <span class="btn__value" >Logout</span>
-             </button>
+            <button class="btn" data-action="logout">
+                <span class="btn__value">Logout</span>
+            </button>
             <button class="btn" data-action="initiate">
-                <span class="btn__value" >Initiate</span>
+                <span class="btn__value">Initiate</span>
             </button>
         </div>
     </div>
@@ -33,15 +33,18 @@
         <h1 class="main__title">Hello, my dear friend! Here u can generate list of ur dota matches</h1>
         <div class="main__form form" id="textSend">
             <div class="input-block">
-                <label for="textField1">Account ID</label>
-                <input id="textField1" class="form__input" type="text">
+                <label for="steamId">Steam ID</label>
+                <input id="steamId" class="form__input" type="text">
             </div>
             <!--<div class="input-block">-->
             <!--<label for="textField2">Text 2</label>-->
             <!--<input id="textField2" class="form__input" type="text">-->
             <!--</div>-->
-            <button class="button form__action" data-action="start">Start</button>
-            <button class="button form__action hidden" data-action="stop">Stop</button>
+            <div class="input-block buttons">
+                <button class="button button-3 form__action" data-action="load">Load</button>
+                <button class="button button-3 form__action" disabled="disabled" data-action="start">Start</button>
+                <button class="button button-3 form__action" disabled="disabled" data-action="stop">Stop</button>
+            </div>
         </div>
         <div class="main__list matches dino">
             <button class="btn dino__action" data-action="generate"><span class="btn__value">Generate</span></button>

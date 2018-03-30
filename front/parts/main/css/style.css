@@ -39,6 +39,13 @@
 .main__form .input-block input {
     width: 100%;
 }
+.input-block.buttons {
+    display: flex;
+    flex-direction: row;
+}
+.buttons .button-3 {
+    width: 33%;
+}
 .main__form .button {
     width: 100%;
 }

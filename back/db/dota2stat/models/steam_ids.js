@@ -20,22 +20,29 @@ module.exports = function (connection, callback) {
         value: {
             type: String
         },
-        requests: {
+        timecreated: {
+            type: Number
+        },
+        reqOptions: {
             type: Object
         }
     }, {collection: 'steam_ids'});
-    const SteamId = connection.model('SteamId', steamIdSchema);
 
-    steamIdSchema.statics.getKeys = function (id,cb) {
+    steamIdSchema.statics.getById = function (id,cb) {
         SteamId.findOne({ "value": id},cb);
     };
     steamIdSchema.statics.saveOptions = function (query, newData, cb) {
         SteamId.findOneAndUpdate(query, newData, {upsert:true}, cb);
     };
-    steamIdSchema.statics.setNew = function (id, cb) {
-        let object = {value: ""+id, reqOptions: makeReqOptions(id)};
-        SteamId.insert(object, cb);
+    steamIdSchema.statics.setNew = function (id, tc, cb) {
+        let object = {value: ""+id, timecreated: tc, reqOptions: makeReqOptions(id)};
+        console.log(object);
+        SteamId.create(object, cb);
     };
+
+    const SteamId = connection.model('SteamId', steamIdSchema);
+
+    SteamId.makeReqOptions = makeReqOptions;
 
     callback(null, SteamId);
 };
@@ -46,7 +53,7 @@ function makeReqOptions(id) {
     let y = new Int64('0xfffffffff');
     let cReqOptions = Object.assign({},reqOptions);
     cReqOptions.GetMatchHistory.ACCOUNT_ID = new String(x & y);
-    cReqOptions.GetPlayerSummaries.steamids = cReqOptions.GetMatchHistory.ACCOUNT_ID;
+    cReqOptions.GetPlayerSummaries.steamids = id;
     return cReqOptions;
 }
 function dec2hex(str){ // .toString(16) only works up to 2^53
