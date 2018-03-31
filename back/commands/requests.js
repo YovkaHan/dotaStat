@@ -50,12 +50,12 @@ const getFromREST = function (request, reqOptions, keyManager) {
                 // The whole response has been received. Print out the result.
                 resp.on('end', () => {
                     let endData = null;
+                    config.keyManager.freeKey(key);
                     try {
                         endData = JSON.parse(data);
                     } catch (err) {
                         reject(err);
                     }
-                    config.keyManager.freeKey(key);
                     resolve(endData);
                 });
 

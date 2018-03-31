@@ -91,7 +91,7 @@ module.exports = function (app, http, User, path, nextRoot) {
         socket.on('start vacuum', function (socket) {
             if(main.app.status() === 1 || main.app.status() === 3){
                 console.log("started");
-                main.app.vacuum.start(200);
+                main.app.vacuum.start(500);
             }else {
                 console.log("NOT started");
             }
