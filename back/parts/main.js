@@ -18,7 +18,7 @@ function VacuumApplication(data) {
     ps._requests = commands.requests(ps.models);
     ps._steamIds = null;
     ps._eventEmiter = new events.EventEmitter();
-    ps._stage = {ready: false};
+    ps._stage = 0;  // 0 - initiated; 1 - loaded; 2 - vacuuming; 3 - stoped
 
     Object.defineProperty(
         this,
@@ -41,9 +41,12 @@ function VacuumApplication(data) {
                     ps._steamIds = result;
 
                     let match = ps.Timeline.getClosest(result.timecreated, ps.Timeline);
-                    ps._steamIds.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num = ""+match.match_seq_num;
 
-                    ps._stage.ready = true;
+                    if(ps._steamIds.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num === 0) {
+                        ps._steamIds.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num = "" + match.match_seq_num;
+                    }
+
+                    ps._stage = 1;
 
                     ps._eventEmiter.emit('stage: id checked');
                 });
@@ -56,7 +59,7 @@ function VacuumApplication(data) {
             ps._eventEmiter.on('stage: id checked', resolving);
 
             function resolving() {
-                resolve({stage: {ready: ps._stage.ready}, info: ps._steamIds});
+                resolve({stage: ps._stage, info: ps._steamIds});
 
                 ps._eventEmiter.removeListener('stage: id checked', resolving);
             }
@@ -70,7 +73,8 @@ function VacuumApplication(data) {
     this.vacuum = function () {
         const cicle = ps._getMHBSN.matchesCycle();
 
-        function start() {
+        function start(timing) {
+            ps._stage = 2;
             cicle.start({
                 action: ps._requests.getFromREST,
                 configToAction: {
@@ -84,11 +88,13 @@ function VacuumApplication(data) {
                             ps.models.Timeline.addNew(result);
                         }
                     });
-                }
-            })
+                },
+                timing: timing
+            });
         }
 
         function stop() {
+            ps._stage = 3;
             cicle.stop({})
         }
 

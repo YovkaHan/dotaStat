@@ -1,7 +1,10 @@
 /**
  * Created by Jordan3D on 3/11/2018.
  */
-var globalStatus = false;
+var globalStatus = {
+    steam_id: "",
+    status: null
+};
 function Memory() {
     var returned = {};
     var store = [];
@@ -54,6 +57,7 @@ function ready() {
         contentType : "application/json",
         method: "GET",
         success: function (data, textStatus) {
+            globalStatus = data;
             init({first: true}, data);
         },
         error: function (request, status, error) {
@@ -66,7 +70,7 @@ function ready() {
             globalStatus = status;
             process('.control');
         }
-        if(status || stage.second) {
+        if(globalStatus.status || stage.second) {
             process('.form');
             process('.dino');
         }
@@ -123,6 +127,18 @@ function ready() {
         var $loadBtn = $element.find('.form__action').filter('[data-action="load"]');
         var $startBtn = $element.find('.form__action').filter('[data-action="start"]');
         var $stopBtn = $element.find('.form__action').filter('[data-action="stop"]');
+
+        if(globalStatus.status){
+            $inputs.filter('#steamId').val(globalStatus.steam_id);
+
+            if(globalStatus.status === "loaded"){
+                $startBtn.removeAttr('disabled');
+            }else if(globalStatus.status === "vacuuming"){
+                $stopBtn.removeAttr('disabled');
+            }else if (globalStatus.status === "stoped"){
+                $startBtn.removeAttr('disabled');
+            }
+        }
 
         socket.on('block-action', function(msg){
             if(msg.data.is === true) {
@@ -200,7 +216,7 @@ function ready() {
         var $element = $(element);
         var $btn = $element.find('.btn');
 
-        if(globalStatus){
+        if(globalStatus.status){
             $btn.filter('[data-action=initiate]').attr('disabled','disabled');
         }
 

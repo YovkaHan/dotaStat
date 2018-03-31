@@ -29,10 +29,21 @@ module.exports = function (app, http, User, path, nextRoot) {
 
     router.get('/init', function (req, res) {
         console.log(address.getAddress(req));
-        if(main.app && main.app.status().ready) {
-            res.send(true);
-        }else {
-            res.send(false);
+        if(main.app){
+            if(main.app.status() === 1){
+                res.send({steam_id: main.app.steamId, status: "loaded"});
+            }
+            if(main.app.status() === 2){
+                res.send({steam_id:  main.app.steamId, status: "vacuuming"});
+            }
+            if(main.app.status() === 3){
+                res.send({steam_id:  main.app.steamId, status: "stoped"});
+            }
+        } else {
+            res.send({
+                steam_id: "",
+                status: null
+            });
         }
     });
 
@@ -62,7 +73,7 @@ module.exports = function (app, http, User, path, nextRoot) {
 
             main.app.stage().then(function (data) {
 
-                if(data.stage.ready){
+                if(data.stage == 1){
                     console.log('READY');
                     io.emit('Steam ID loaded', {info: data.info});
                 }
@@ -78,9 +89,9 @@ module.exports = function (app, http, User, path, nextRoot) {
             main.app.vacuum.stop();
         });
         socket.on('start vacuum', function (socket) {
-            if(main.app.status().ready){
+            if(main.app.status() === 1 || main.app.status() === 3){
                 console.log("started");
-                main.app.vacuum.start();
+                main.app.vacuum.start(200);
             }else {
                 console.log("NOT started");
             }

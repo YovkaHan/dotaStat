@@ -40,10 +40,12 @@ module.exports = function (keys) {
     };
 
     kM.freeKey = function (key) {
+        // console.log('free');
+        // console.log(manager.freeKeys);
         let index = manager.inUseKeys.indexOf(key);
         if (index >= 0) {
             let key = manager.inUseKeys.splice(index, 1)[0];
-            manager.freeKeys.push(key);
+            manager.freeKeys.unshift(key);
             manager.eventEmitter.emit('free key');
         } else {
             manager.eventEmitter.emit('free key mistake');
