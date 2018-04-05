@@ -9,6 +9,8 @@ module.exports = function (models) {
        return new Promise(function (resolve, reject) {
            getRest.then(function (data) {
                resolve(data.response.players[0]);
+           }).catch(function (e) {
+               reject(e);
            });
        });
     }
@@ -33,6 +35,8 @@ module.exports = function (models) {
                         reject(false);  // Если ошибка
                     }
                 });
+            }).catch(function (e) {
+                reject(e);
             });
         });
     }

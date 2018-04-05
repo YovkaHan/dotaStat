@@ -53,6 +53,7 @@ module.exports = function(models, callback){
 
                             callback(null, Timeline);
                         }else {
+                            callback(err);
                             console.log("TIMELINE ERROR");
                         }
                     })
@@ -61,6 +62,8 @@ module.exports = function(models, callback){
                     Timeline.reqOptions = reqOptions(privates.sIdSample, 0);
                     callback(null, Timeline);
                 }
+            } else {
+                callback(err);
             }
         })
     }

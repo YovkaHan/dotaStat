@@ -24,9 +24,9 @@ const Promise = require('bluebird');
 
 module.exports = function (models) {
 
-    function getMatchesFromDB() {
+    function getMatchesFromDB(account_id) {
         return new Promise(function (resolve, reject) {
-            models.Match.getMatches({}, function (err, matches) {
+            models.Match.getMatches({'players.account_id': account_id*1}, function (err, matches) {
                 if (err) {
                     reject(err);
                 }
@@ -83,7 +83,7 @@ module.exports = function (models) {
                     }
                 });
             }).catch(function (err) {
-                console.log('getMatchesCycle Error');
+                console.log('getMatchesCycle Error: ');
                 console.log(err);
                 resolve({});
             })

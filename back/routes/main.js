@@ -65,36 +65,38 @@ module.exports = function (app, http, User, path, nextRoot) {
     });
 
     io.on('connection', function (socket) {
-        console.log('connected');
 
         socket.on('Steam ID load', function (socket) {
+            main.app.stage('loading').then(function (data) {
 
-            main.app.steamId = socket.data.steamId;
-
-            main.app.stage().then(function (data) {
-
-                if(data.stage == 1){
-                    console.log('READY');
-                    io.emit('Steam ID loaded', {info: data.info});
+                if (!isProd) {
+                    console.log("loaded");
                 }
-            });
 
-            // cicle.start({action: gMHBSN.getFromREST, timing: 500}, function (data) {
-            //     io.emit('data-transmission', data);
-            //
-            //     globalStatus.started = true; // статус "в работе"
-            // });
-        });
-        socket.on('stop vacuum', function (socket) {
-            main.app.vacuum.stop();
+                io.emit('Steam ID loaded', {info: data.info});
+            });
+            main.app.steamId = socket.data.steamId;
         });
         socket.on('start vacuum', function (socket) {
-            if(main.app.status() === 1 || main.app.status() === 3){
-                console.log("started");
-                main.app.vacuum.start(500);
-            }else {
-                console.log("NOT started");
-            }
+            main.app.stage('starting').then(function (data) {
+
+                if (!isProd) {
+                    console.log("started");
+                }
+
+                io.emit('Vacuuming started');
+            });
+            main.app.vacuum.start(500);
+        });
+        socket.on('stop vacuum', function (socket) {
+            main.app.stage('stopping').then(function (data) {
+
+                if (!isProd) {
+                    console.log("stopped");
+                }
+                io.emit('Vacuuming stoped');
+            });
+            main.app.vacuum.stop();
         });
         socket.on('show matches', function (socket) {
             main.app.results().then(function (result) {

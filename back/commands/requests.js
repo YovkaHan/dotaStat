@@ -5,10 +5,7 @@ const https = require('https');
 
 module.exports = function () {
     return {
-        //Promise <- (метод, объект стим_идс, keyManager)
         getFromREST: getFromREST,
-
-
     }
 };
 
@@ -25,7 +22,10 @@ const makeOptions = function (reqStr) {
     };
 };
 
+// return Promise   getFromREST(config) || getFromREST(request, reqOptions, keyManager)
 const getFromREST = function (request, reqOptions, keyManager) {
+
+    // config initialization
     let config = {};
     if(arguments.length === 1){
         config = arguments[0];
@@ -34,10 +34,17 @@ const getFromREST = function (request, reqOptions, keyManager) {
         config.reqOptions = reqOptions;
         config.keyManager = keyManager;
     }
+
     return new Promise(function (resolve, reject) {
         config.keyManager.passKey().then(function (key) {
 
-            let options = makeOptions(requestString(config.request, config.reqOptions, key));
+            let options = makeOptions(
+                requestString(
+                    config.request,
+                    config.reqOptions,
+                    key
+                )
+            );
 
             https.get(options, (resp) => {
                 let data = '';
@@ -60,7 +67,9 @@ const getFromREST = function (request, reqOptions, keyManager) {
                 });
 
             }).on("error", (err) => {
-                console.log("Error: " + err.message);
+                if(!isProd) {
+                    console.log("Error: " + err.message);
+                }
                 reject(err);
             });
         });

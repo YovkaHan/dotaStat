@@ -6,7 +6,6 @@ const commands = require('../commands');
 const events = require('events');
 
 function VacuumApplication(data) {
-    // Возможно нужно будет клонировать объект
 
     let ps = {};
     for (let o in data) {
@@ -42,26 +41,45 @@ function VacuumApplication(data) {
 
                     let match = ps.Timeline.getClosest(result.timecreated, ps.Timeline);
 
-                    if(ps._steamIds.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num === 0) {
+                    if (ps._steamIds.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num === 0) {
                         ps._steamIds.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num = "" + match.match_seq_num;
                     }
 
                     ps._stage = 1;
 
                     ps._eventEmiter.emit('stage: id checked');
+                }).catch(function (e) {
+                    console.log('checkPlayer Error: ');
+                    console.log(e);
                 });
 
             }
         });
 
-    this.stage = function () {
+    this.stage = function (name) {
         return new Promise(function (resolve, reject) {
-            ps._eventEmiter.on('stage: id checked', resolving);
 
+            if (name === 'loading') {
+                ps._eventEmiter.on('stage: id checked', resolving.bind({event: 1}));
+            } else if (name === 'starting') {
+                ps._eventEmiter.on('stage: vacuum started', resolving.bind({event: 2}));
+            } else if (name === 'stopping') {
+                ps._eventEmiter.on('stage: vacuum stopped', resolving.bind({event: 3}));
+            }
             function resolving() {
                 resolve({stage: ps._stage, info: ps._steamIds});
 
-                ps._eventEmiter.removeListener('stage: id checked', resolving);
+                switch (this.event) {
+                    case 1:
+                        ps._eventEmiter.removeListener('stage: id checked', resolving);
+                        break;
+                    case 2:
+                        ps._eventEmiter.removeListener('stage: vacuum started', resolving);
+                        break;
+                    case 3:
+                        ps._eventEmiter.removeListener('stage: vacuum stopped', resolving);
+                        break;
+                }
             }
         });
     };
@@ -74,40 +92,62 @@ function VacuumApplication(data) {
         const cicle = ps._getMHBSN.matchesCycle();
 
         function start(timing) {
-            ps._stage = 2;
-            cicle.start({
-                action: ps._requests.getFromREST,
-                configToAction: {
-                    request: "GetMatchHistoryBySequenceNum",
-                    reqOptions: ps._steamIds.reqOptions,
-                    keyManager: ps.keyService
-                },
-                actionInAction: function(results){
-                    ps.Timeline.searchHandle(results, ps.Timeline).then(function (result) {
-                        if(result){
-                            ps.models.Timeline.addNew(result);
-                        }
-                    });
-                },
-                timing: timing
-            });
+
+            if (ps._stage === 1 || ps._stage === 3) {
+                ps._eventEmiter.emit('stage: vacuum started');
+                job();
+            }
+
+            function job() {
+                ps._stage = 2;
+                cicle.start({
+                    action: ps._requests.getFromREST,
+                    configToAction: {
+                        request: "GetMatchHistoryBySequenceNum",
+                        reqOptions: ps._steamIds.reqOptions,
+                        keyManager: ps.keyService
+                    },
+                    actionInAction: function (results) {
+                        ps.Timeline.searchHandle(results, ps.Timeline).then(function (result) {
+                            if (result) {
+                                ps.models.Timeline.addNew(result);
+                            }
+                        });
+                    },
+                    timing: timing
+                });
+            }
         }
 
         function stop() {
-            ps._stage = 3;
-            cicle.stop({})
-        }
 
+            if (ps._stage === 2) {
+                ps._eventEmiter.emit('stage: vacuum stopped');
+                job();
+            }
+
+            function job() {
+                ps._stage = 3;
+                cicle.stop({})
+            }
+        }
 
         return {
             start: start,
             stop: stop
         }
     }();
-
-    function secondStage() {
-
+    
+    this.results = function () {
+        return new Promise(function (resolve, reject) {
+            ps._getMHBSN.getMatchesFromDB(ps._steamIds.reqOptions.GetMatchHistory.ACCOUNT_ID).then(function (result) {
+                resolve(result);
+            }).catch(function (e) {
+                console.log(e);
+            });
+        })
     }
+
 }
 
 module.exports = function () {
@@ -141,9 +181,12 @@ module.exports = function () {
                         setups.ready = true;
 
                         resolve({});
+                    }).catch(function (e) {
+                        reject(e);
                     });
 
                 }).catch(function (err) {
+                    console.log("Initiation Error: ");
                     console.log(err);
                 });
             })
@@ -154,7 +197,7 @@ module.exports = function () {
                 if (setups.ready) {
                     resolve(setups);
                 } else {
-                    reject('Not ready');
+                    reject(new Error("Not ready to start"));
                 }
             })
         },

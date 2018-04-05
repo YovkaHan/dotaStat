@@ -76,8 +76,8 @@ module.exports = function (connection, callback) {
         }
     }, {collection: 'matches'});
 
-    matchesSchema.statics.getMatches = function (options, limit, cb) {
-        Match.find(options,cb).limit(limit);
+    matchesSchema.statics.getMatches = function (options, callback) {
+        Match.find(options,callback);
     };
     matchesSchema.statics.addMatch = function (options,callback) {
         // matches.find({match_id: options.match_id}, function (err, match) {
