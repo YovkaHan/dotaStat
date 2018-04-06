@@ -30,6 +30,9 @@ module.exports = function (app, http, User, path, nextRoot) {
     router.get('/init', function (req, res) {
         console.log(address.getAddress(req));
         if(main.app){
+            if(main.app.status() === 0){
+                res.send({steam_id: "", status: "initiated"});
+            }
             if(main.app.status() === 1){
                 res.send({steam_id: main.app.steamId, status: "loaded"});
             }

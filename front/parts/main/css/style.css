@@ -7,11 +7,32 @@
     margin: 0 auto;
     max-width: 1000px;
 }
+button {
+    min-width: 100px;
+    min-height: 36px;
+    background: #ffffff;
+    color: #0400bbc7;
+    font-size: 18px;
+    font-weight: 500;
+    /* border: 2px solid green; */
+    font-family: 'Roboto', serif;
+}
+button[disabled]{
+    color: rgba(4, 0, 179, 0.3);
+}
+header {
+    padding: 10px 0;
+    background: cadetblue;
+}
 .main {
-
+    padding-top: 20px;
 }
 .main__title {
     text-align: center;
+    margin-top: 0;
+    font-size: 30px;
+    font-weight: 400;
+    font-family: 'Roboto', serif;
 }
 .main__form {
     position: relative;
@@ -35,6 +56,8 @@
 .main__form .input-block label {
     font-size: 20px;
     font-weight: 700;
+    align-self: flex-start;
+    margin-bottom: 6px;
 }
 .main__form .input-block input {
     width: 100%;

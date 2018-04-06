@@ -145,7 +145,9 @@ function VacuumApplication(data) {
             }).catch(function (e) {
                 console.log(e);
             });
-        })
+        }).catch(function (e) {
+            console.log(e);
+        });
     }
 
 }

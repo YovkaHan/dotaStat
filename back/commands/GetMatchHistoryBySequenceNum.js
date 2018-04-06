@@ -77,7 +77,9 @@ module.exports = function (models) {
                     }
                     if (i === list.length - 1) {
                         config.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num = "" + match.match_seq_num;
-                        console.log(config.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num);
+                        if(!isProd) {
+                            console.log(config.reqOptions.GetMatchHistoryBySequenceNum.start_at_match_seq_num);
+                        }
                         stopMatchesCycle(config);
                         resolve({});
                     }

@@ -46,7 +46,9 @@ module.exports = function(models, callback){
                     models.Timeline.findMax(function (err, max) {
                         let _max = max[0];
                         if(!err){
-                            console.log(_max);
+                            if(!isProd) {
+                                console.log(_max);
+                            }
                             privates.nextDate = _max.start_time;
 
                             Timeline.reqOptions = reqOptions(privates.sIdSample, _max.match_seq_num);
